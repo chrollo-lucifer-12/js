@@ -12,19 +12,39 @@ export function mount(node: HTMLElement, target: HTMLElement) {
 
 function Counter() {
   const [count, setCount] = state(0);
-  //console.log(count);
 
   function clickHandler() {
     setCount((c: number) => c + 1);
   }
 
+  return createElement("div", {}, [
+    createElement("h2", {}, ["Counter"]),
+    createElement(
+      "button",
+      {
+        onClick: clickHandler,
+        id: "count",
+      },
+      [`Count: ${count}`],
+    ),
+  ]);
+}
+
+function List() {
+  const items = ["Apple", "Banana", "Orange", "Mango"];
+
   return createElement(
-    "button",
-    {
-      onClick: clickHandler,
-      id: "count",
-    },
-    [`Count: ${count}`],
+    "ul",
+    { class: "list" },
+    items.map((item) => createElement("li", { class: "list-item" }, [item])),
+  );
+}
+
+function Card(title: string, content: string) {
+  return createElement(
+    "div",
+    { class: "card", style: "border:1px solid #ccc;padding:10px;margin:5px;" },
+    [createElement("h3", {}, [title]), createElement("p", {}, [content])],
   );
 }
 
@@ -33,9 +53,9 @@ function app() {
     "div",
     {
       id: "app",
-      style: "color: red",
+      style: "color: red; font-family: sans-serif",
     },
-    ["Hello World!", Counter()],
+    [Counter()],
   );
 }
 
@@ -50,12 +70,12 @@ function build(entry: () => VElement) {
 }
 
 export function rerender() {
+  const oldVNode = currentVNode;
+
   reset();
   currentVNode = app();
 
-  const newDom = render(currentVNode) as HTMLElement;
-
-  currentDom = mount(newDom, currentDom);
+  diff(currentDom, oldVNode, currentVNode);
 }
 
 build(app);

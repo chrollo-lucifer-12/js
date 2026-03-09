@@ -6,6 +6,10 @@ import {
 } from "./event-listeners";
 import { render, type VAttrs, type VNode } from "./virtual";
 
+function isText(v: VNode): v is string {
+  return typeof v === "string";
+}
+
 function updateAttrs($node: HTMLElement, oldAttrs: VAttrs, newAttrs: VAttrs) {
   for (const [k, v] of Object.entries(newAttrs)) {
     if (typeof v === "function" && isEventAttr(k)) {
@@ -39,13 +43,13 @@ function updateChildren(
     const newChild = newChildren[i];
     const childNode = childNodes[i];
 
-    if (!oldChild && newChild) {
+    if (oldChild && newChild) {
       const node =
         typeof newChild === "string"
           ? document.createTextNode(newChild)
           : render(newChild);
 
-      $parent.appendChild(node);
+      $parent.replaceChild(node, childNode!);
     } else if (!newChild && childNode) {
       childNode.remove();
     } else if (oldChild && newChild && childNode instanceof HTMLElement) {
@@ -56,13 +60,15 @@ function updateChildren(
 
 export function diff($node: HTMLElement, oldVNode: VNode, newVNode: VNode) {
   if (!newVNode) {
+    console.log("early return");
     $node.remove();
     return;
   }
 
-  if (typeof oldVNode === "string" || typeof newVNode === "string") {
+  if (isText(oldVNode) || isText(newVNode)) {
     if (oldVNode != newVNode) {
       const newNode = document.createTextNode(newVNode.toString());
+      console.log("string", newNode);
       $node.replaceWith(newNode);
     }
     return;
@@ -70,7 +76,8 @@ export function diff($node: HTMLElement, oldVNode: VNode, newVNode: VNode) {
 
   if (oldVNode.tagName != newVNode.tagName) {
     const newNode = render(newVNode);
-    mount($node, newNode);
+    console.log("change in tagname", newNode);
+    mount(newNode, $node);
     return;
   }
 
