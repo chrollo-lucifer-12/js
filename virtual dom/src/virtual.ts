@@ -3,6 +3,7 @@ import {
   isEventAttr,
   type EventAttrKey,
 } from "./event-listeners";
+import { incrementRender } from "./state";
 
 export type VAttrValue = string | number | boolean | ((ev: Event) => void);
 export type VAttrs = Record<string, VAttrValue>;
@@ -26,6 +27,7 @@ export function createElement(
 }
 
 export function render(node: VElement) {
+  incrementRender();
   const { attrs, tagName, children } = node;
 
   const $el = document.createElement(tagName);

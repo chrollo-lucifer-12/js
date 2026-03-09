@@ -1,13 +1,24 @@
 import { mount } from ".";
+import {
+  attachListener,
+  isEventAttr,
+  type EventAttrKey,
+} from "./event-listeners";
 import { render, type VAttrs, type VNode } from "./virtual";
 
 function updateAttrs($node: HTMLElement, oldAttrs: VAttrs, newAttrs: VAttrs) {
   for (const [k, v] of Object.entries(newAttrs)) {
-    if ($node.getAttribute(k) !== String(v)) {
-      $node.setAttribute(k, String(v));
+    if (typeof v === "function" && isEventAttr(k)) {
+      attachListener($node, k as EventAttrKey, v as EventListener);
+    } else if (typeof v === "boolean") {
+      if (v) $node.setAttribute(k, "");
+      else $node.removeAttribute(k);
+    } else {
+      if ($node.getAttribute(k) !== String(v)) {
+        $node.setAttribute(k, String(v));
+      }
     }
   }
-
   for (const attr of Array.from($node.attributes)) {
     if (!(attr.name in newAttrs)) {
       $node.removeAttribute(attr.name);
