@@ -1,6 +1,6 @@
 import { createElement, render, type VElement } from "./virtual";
 
-function mount(node: HTMLElement, target: HTMLElement) {
+export function mount(node: HTMLElement, target: HTMLElement) {
   target.replaceWith(node);
   return node;
 }
@@ -10,28 +10,30 @@ function app() {
     "div",
     {
       id: "app",
-      style: "font-family: sans-serif",
+      style: "color: red",
     },
     [
       "Hello World!",
-      createElement("button", {
-        id: "submit",
-        value: "submit",
-        onClick: () => {
-          console.log("clicked");
+      createElement(
+        "button",
+        {
+          id: "submit",
+          onClick: () => {
+            console.log("clicked");
+          },
         },
-      }),
+        ["submit"],
+      ),
     ],
   );
 }
 
 function build(entry: () => VElement) {
-  console.log("build running");
   const app = render(entry());
-  console.log(app);
   const div = document.getElementById("app");
   if (!div) throw new Error("missing app");
-  mount(app, div);
+
+  mount(app as HTMLElement, div);
 }
 
 build(app);
