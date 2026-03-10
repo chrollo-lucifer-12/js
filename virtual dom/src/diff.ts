@@ -1,9 +1,9 @@
-import { mount } from ".";
 import {
   attachListener,
   isEventAttr,
   type EventAttrKey,
 } from "./event-listeners";
+import { mount } from "./render";
 import { render, type VAttrs, type VNode } from "./virtual";
 
 function isText(v: VNode): v is string {
@@ -60,7 +60,6 @@ function updateChildren(
 
 export function diff($node: HTMLElement, oldVNode: VNode, newVNode: VNode) {
   if (!newVNode) {
-    console.log("early return");
     $node.remove();
     return;
   }
@@ -68,7 +67,6 @@ export function diff($node: HTMLElement, oldVNode: VNode, newVNode: VNode) {
   if (isText(oldVNode) || isText(newVNode)) {
     if (oldVNode != newVNode) {
       const newNode = document.createTextNode(newVNode.toString());
-      console.log("string", newNode);
       $node.replaceWith(newNode);
     }
     return;
@@ -76,7 +74,6 @@ export function diff($node: HTMLElement, oldVNode: VNode, newVNode: VNode) {
 
   if (oldVNode.tagName != newVNode.tagName) {
     const newNode = render(newVNode);
-    console.log("change in tagname", newNode);
     mount(newNode, $node);
     return;
   }

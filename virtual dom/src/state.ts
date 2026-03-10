@@ -1,4 +1,4 @@
-import { rerender } from ".";
+import { rerender } from "./render";
 
 const componentStates = new Map<string, any>();
 let renderCounter = 0;
