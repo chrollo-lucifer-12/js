@@ -9,4 +9,7 @@ export const countSelector = selector({
     const count = get(countAtom);
     return count + 5;
   },
+  set: ({ set }, newVal) => {
+    set(countAtom, newVal);
+  },
 });

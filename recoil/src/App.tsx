@@ -1,23 +1,22 @@
 import "./App.css";
-import { useCoiledState, useCoiledValue } from "./hooks/use-coiled";
+import { useCoiledState } from "./hooks/use-coiled";
 import { countAtom, countSelector } from "./lib/store";
-import Navbar from "./Navbar";
 
 function App() {
-  const [count, setCount] = useCoiledState(countAtom);
-  const val = useCoiledValue(countSelector);
+  const [val, setVal] = useCoiledState(countAtom);
+  const [count, setCount] = useCoiledState(countSelector);
 
   return (
     <div>
-      {count}{" "}
+      value : {val} total : {count}
       <button
         onClick={() => {
-          setCount(count + 5);
+          setVal(val + 1);
         }}
       >
         click
       </button>
-      <p>new : {val}</p>
+      <button onClick={() => setCount(4)}>change increment</button>
     </div>
   );
 }

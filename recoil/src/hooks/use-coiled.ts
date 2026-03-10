@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Atom, Stateful } from "../lib/recoil/atom";
+import type { Stateful } from "../lib/recoil/atom";
 
 export function useCoiledValue<T>(value: Stateful<T>): T {
   const [, updateState] = useState({});
@@ -12,7 +12,15 @@ export function useCoiledValue<T>(value: Stateful<T>): T {
   return value.snapshot();
 }
 
-export function useCoiledState<T>(atom: Atom<T>): [T, (value: T) => void] {
-  const value = useCoiledValue(atom);
-  return [value, useCallback((value) => atom.update(value), [atom])];
+export function useCoiledState<T>(state: Stateful<T>): [T, (value: T) => void] {
+  const value = useCoiledValue(state);
+
+  const setValue = useCallback(
+    (newValue: T) => {
+      state.update(newValue);
+    },
+    [state],
+  );
+
+  return [value, setValue];
 }
