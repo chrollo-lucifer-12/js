@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Atom } from "../lib/recoil/atom";
+import type { Atom, Stateful } from "../lib/recoil/atom";
 
-export function useCoiledValue<T>(value: Atom<T>): T {
+export function useCoiledValue<T>(value: Stateful<T>): T {
   const [, updateState] = useState({});
 
   useEffect(() => {

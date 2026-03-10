@@ -1,8 +1,8 @@
 type Disconnector = { disconnect: () => void };
 
-export class Atom<T> {
-  listeners = new Set<(value: T) => void>();
+export class Stateful<T> {
   value: T;
+  listeners = new Set<(value: T) => void>();
 
   constructor(value: T) {
     this.value = value;
@@ -31,4 +31,14 @@ export class Atom<T> {
       },
     };
   }
+}
+
+export class Atom<T> extends Stateful<T> {
+  update(value: T): void {
+    super.update(value);
+  }
+}
+
+export function atom<V>(value: { key: string; default: V }): Atom<V> {
+  return new Atom(value.default);
 }

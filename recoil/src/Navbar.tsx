@@ -1,25 +1,14 @@
-import "./App.css";
 import { useCoiledState, useCoiledValue } from "./hooks/use-coiled";
 import { countAtom, countSelector } from "./lib/store";
-import Navbar from "./Navbar";
 
-function App() {
+const Navbar = () => {
   const [count, setCount] = useCoiledState(countAtom);
   const val = useCoiledValue(countSelector);
-
   return (
     <div>
-      {count}{" "}
-      <button
-        onClick={() => {
-          setCount(count + 5);
-        }}
-      >
-        click
-      </button>
-      <p>new : {val}</p>
+      {count} {val}
     </div>
   );
-}
+};
 
-export default App;
+export default Navbar;
