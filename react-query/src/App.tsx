@@ -1,28 +1,48 @@
+import { useContext } from "react";
 import "./App.css";
-import { useQuery } from "./hooks/use-query";
+import { useMutation, useQuery } from "./hooks/use-query";
+import { QueryClientContext } from "./provider";
+
+const delay = () =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(1);
+    }, 2000);
+  });
 
 function App() {
-  const { data, isFetching } = useQuery({
-    queryKey: "hi",
-    queryFn: async () => {
-      const data = await fetch("https://jsonplaceholder.typicode.com/todos/1");
-      return data.json();
-    },
-  });
-  const { data: todo, isFetching: isTodoFetching } = useQuery({
+  const client = useContext(QueryClientContext)!;
+  const { data: todo2, isFetching: isTodoFetching2 } = useQuery({
     queryKey: "hi2",
     queryFn: async () => {
+      await delay();
       const data = await fetch("https://jsonplaceholder.typicode.com/todos/2");
       return data.json();
     },
+    refetchOnFocus: false,
   });
 
-  if (isFetching || isTodoFetching) return <p>loading....</p>;
+  const { isMutating, mutate } = useMutation({
+    mutationKey: "sdg",
+    mutationFn: async () => {
+      await delay();
+      return;
+    },
+    onSuccess: () => {
+      console.log("mutation done");
+      client.invalidateQuery("hi2");
+    },
+  });
+
+  if (isTodoFetching2) return <p>todo 2 fetching</p>;
 
   return (
     <div>
-      {data.title}
-      {todo.title}
+      <p>todo2 : {todo2.title}</p>
+      <button disabled={isMutating} onClick={() => mutate()}>
+        mutate
+      </button>
+      <p>{isMutating && "updating..."}</p>
     </div>
   );
 }
