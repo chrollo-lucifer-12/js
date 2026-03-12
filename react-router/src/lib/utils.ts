@@ -32,7 +32,10 @@ const buildTreeHelper = (children: ReactNode) => {
 
 export const buildTree = (children: ReactNode) => {
   if (routesTree.length !== 0) return;
+  const start = performance.now();
   routesTree = buildTreeHelper(children);
+  const end = performance.now();
+  console.log("Time taken for building tree:", end - start, "ms");
 };
 
 const findMatchHelper = (
@@ -90,5 +93,9 @@ export const findMatch = (
   params: { [x: string]: string };
 } => {
   const paths = path.split("/").slice(1);
-  return findMatchHelper(paths, routesTree);
+  const start = performance.now();
+  let res = findMatchHelper(paths, routesTree);
+  const end = performance.now();
+  console.log("Time taken for matching:", end - start, "ms");
+  return res;
 };

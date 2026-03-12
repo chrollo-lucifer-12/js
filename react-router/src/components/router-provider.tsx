@@ -10,6 +10,17 @@ export type RouteProps = {
   layout?: ({ children }: { children: ReactNode }) => ReactNode;
 };
 
+function navigationStress() {
+  console.time("navigation");
+
+  for (let i = 0; i < 20000; i++) {
+    const path = `/route-${Math.floor(Math.random() * 50000)}`;
+    findMatch(path);
+  }
+
+  console.timeEnd("navigation");
+}
+
 export const Router = ({ children }: { children: ReactNode }) => {
   buildTree(children);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);

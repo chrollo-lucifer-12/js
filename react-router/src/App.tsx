@@ -56,17 +56,12 @@ const AboutLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const routes = Array.from({ length: 50000 }, (_, i) => (
+  <Route key={i} path={`/route-${i}`} render={<div>Page {i}</div>} />
+));
+
 function App() {
-  return (
-    <Router>
-      <Route path="/" render={<HomePage />} />
-      <Route path="/about" render={<AboutPage />} layout={AboutLayout}>
-        <Route path="/:company" render={<CompanyDetails />}>
-          <Route path="/:name" render={<LegalDetails />} />
-        </Route>
-      </Route>
-    </Router>
-  );
+  return <Router>{routes}</Router>;
 }
 
 export default App;
