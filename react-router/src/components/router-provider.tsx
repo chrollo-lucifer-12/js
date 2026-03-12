@@ -7,6 +7,7 @@ export type RouteProps = {
   path: string;
   render: ReactNode;
   children?: ReactNode;
+  layout?: ({ children }: { children: ReactNode }) => ReactNode;
 };
 
 export const Router = ({ children }: { children: ReactNode }) => {
@@ -35,7 +36,15 @@ export const Router = ({ children }: { children: ReactNode }) => {
     <RouterContext.Provider
       value={{ currentPath, navigate: handleRoute, params: element.params }}
     >
-      {element.element ?? <NotFound />}
+      {element.element ? (
+        element.layout ? (
+          <element.layout>{element.element}</element.layout>
+        ) : (
+          element.element
+        )
+      ) : (
+        <NotFound />
+      )}
     </RouterContext.Provider>
   );
 };

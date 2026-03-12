@@ -5,6 +5,7 @@ import type { RouteProps } from "../components/router-provider";
 type RouteTree = {
   path: string;
   render: ReactNode;
+  layout?: ({ children }: { children: ReactNode }) => ReactNode;
   children: RouteTree[];
 };
 
@@ -20,6 +21,7 @@ const buildTreeHelper = (children: ReactNode) => {
       routes.push({
         path: routeProps.path,
         render: routeProps.render,
+        layout: routeProps.layout,
         children: buildTreeHelper(routeProps.children),
       });
     }
@@ -37,7 +39,12 @@ const findMatchHelper = (
   paths: string[],
   currTree: RouteTree[],
   params: Record<string, string> = {},
-): { element: ReactNode; params: { [x: string]: string } } => {
+  layout: any = null,
+): {
+  element: ReactNode;
+  layout: ({ children }: { children: ReactNode }) => ReactNode;
+  params: { [x: string]: string };
+} => {
   for (const tree of currTree) {
     const segment = tree.path.slice(1);
 
@@ -45,25 +52,43 @@ const findMatchHelper = (
       const key = segment.slice(1);
       const newParams = { ...params, [key]: paths[0] };
       if (paths.length === 1) {
-        return { element: tree.render, params: newParams };
+        return {
+          element: tree.render,
+          params: newParams,
+          layout: tree.layout ?? layout,
+        };
       }
-      return findMatchHelper(paths.slice(1), tree.children, newParams);
+      return findMatchHelper(
+        paths.slice(1),
+        tree.children,
+        newParams,
+        tree.layout ?? layout,
+      );
     }
 
     if (segment === paths[0]) {
       if (paths.length === 1) {
-        return { element: tree.render, params };
+        return { element: tree.render, params, layout: tree.layout ?? layout };
       }
-      return findMatchHelper(paths.slice(1), tree.children, params);
+      return findMatchHelper(
+        paths.slice(1),
+        tree.children,
+        params,
+        tree.layout ?? layout,
+      );
     }
   }
 
-  return { element: null, params };
+  return { element: null, params, layout };
 };
 
 export const findMatch = (
   path: string,
-): { element: ReactNode; params: { [x: string]: string } } => {
+): {
+  element: ReactNode;
+  layout: ({ children }: { children: ReactNode }) => ReactNode;
+  params: { [x: string]: string };
+} => {
   const paths = path.split("/").slice(1);
   return findMatchHelper(paths, routesTree);
 };

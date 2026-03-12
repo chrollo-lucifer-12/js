@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import "./App.css";
 import { Route, Router } from "./components/router-provider";
 import { useRouter } from "./hooks/use-router";
@@ -46,11 +47,20 @@ const LegalDetails = () => {
   );
 };
 
+const AboutLayout = ({ children }: { children: ReactNode }) => {
+  return (
+    <div>
+      <p>this is layout</p>
+      {children}
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
       <Route path="/" render={<HomePage />} />
-      <Route path="/about" render={<AboutPage />}>
+      <Route path="/about" render={<AboutPage />} layout={AboutLayout}>
         <Route path="/:company" render={<CompanyDetails />}>
           <Route path="/:name" render={<LegalDetails />} />
         </Route>
