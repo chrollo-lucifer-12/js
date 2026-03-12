@@ -23,13 +23,6 @@ const AboutPage = () => {
         Company Details
       </button>
       <button onClick={() => navigate("/about/legal")}>Legal Details</button>
-
-      <Route path="/about/company" exact>
-        <CompanyDetails />
-      </Route>
-      <Route path="/about/legal" exact>
-        <LegalDetails />
-      </Route>
     </div>
   );
 };
@@ -38,6 +31,7 @@ const CompanyDetails = () => (
   <div>
     <h2>Company Details</h2>
     <p>Here are the details of the company...</p>
+    <a href={`/about/company/sas`}>sahil company</a>
   </div>
 );
 
@@ -51,12 +45,13 @@ const LegalDetails = () => (
 function App() {
   return (
     <Router>
-      <Route path="/" exact>
-        <HomePage />
+      <Route path="/" render={<HomePage />} />
+      <Route path="/about" render={<AboutPage />}>
+        <Route path="/company" render={<CompanyDetails />}>
+          <Route path="/:name" render={<LegalDetails />} />
+        </Route>
       </Route>
-      <Route path="/about" exact={false}>
-        <AboutPage />
-      </Route>
+      {/*<Route path="/about/legal" exact render={<LegalDetails />} />*/}
     </Router>
   );
 }

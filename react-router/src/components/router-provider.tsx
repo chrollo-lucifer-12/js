@@ -1,7 +1,15 @@
 import { useContext, useEffect, useState, type ReactNode } from "react";
 import { RouterContext } from "./contexts";
+import { buildTree, findMatch } from "../lib/utils";
+
+export type RouteProps = {
+  path: string;
+  render: ReactNode;
+  children?: ReactNode;
+};
 
 export const Router = ({ children }: { children: ReactNode }) => {
+  buildTree(children);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   const handleRoute = (path: string) => {
@@ -20,25 +28,15 @@ export const Router = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  const element = findMatch(currentPath);
+
   return (
     <RouterContext.Provider value={{ currentPath, navigate: handleRoute }}>
-      {children}
+      {element}
     </RouterContext.Provider>
   );
 };
 
-export const Route = ({
-  path,
-  children,
-  exact = false,
-}: {
-  path: string;
-  children: ReactNode;
-  exact: boolean;
-}) => {
-  const { currentPath } = useContext(RouterContext)!;
-
-  const match = exact ? currentPath === path : currentPath.startsWith(path);
-
-  return match ? children : null;
+export const Route = (_props: RouteProps) => {
+  return null;
 };
