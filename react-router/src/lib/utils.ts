@@ -33,21 +33,37 @@ export const buildTree = (children: ReactNode) => {
   routesTree = buildTreeHelper(children);
 };
 
-const findMatchHelper = (paths: string[], currTree: RouteTree[]) => {
-  const entry = currTree.find(
-    (tree) => tree.path.slice(1) === paths[0] || tree.path.startsWith("/:"),
-  );
+const findMatchHelper = (
+  paths: string[],
+  currTree: RouteTree[],
+  params: Record<string, string> = {},
+): { element: ReactNode; params: { [x: string]: string } } => {
+  for (const tree of currTree) {
+    const segment = tree.path.slice(1);
 
-  if (!entry) return null;
+    if (segment.startsWith(":")) {
+      const key = segment.slice(1);
+      const newParams = { ...params, [key]: paths[0] };
+      if (paths.length === 1) {
+        return { element: tree.render, params: newParams };
+      }
+      return findMatchHelper(paths.slice(1), tree.children, newParams);
+    }
 
-  if (paths.length === 1) {
-    return entry.render ?? null;
+    if (segment === paths[0]) {
+      if (paths.length === 1) {
+        return { element: tree.render, params };
+      }
+      return findMatchHelper(paths.slice(1), tree.children, params);
+    }
   }
 
-  return findMatchHelper(paths.slice(1), entry.children);
+  return { element: null, params };
 };
 
-export const findMatch = (path: string): ReactNode => {
+export const findMatch = (
+  path: string,
+): { element: ReactNode; params: { [x: string]: string } } => {
   const paths = path.split("/").slice(1);
   return findMatchHelper(paths, routesTree);
 };

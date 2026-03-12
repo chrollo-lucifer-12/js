@@ -1,9 +1,9 @@
 import "./App.css";
 import { Route, Router } from "./components/router-provider";
-import { useNavigate } from "./hooks/use-navigate";
+import { useRouter } from "./hooks/use-router";
 
 const HomePage = () => {
-  const navigate = useNavigate();
+  const { navigate } = useRouter();
   return (
     <div>
       <h1>Home Page</h1>
@@ -13,7 +13,7 @@ const HomePage = () => {
 };
 
 const AboutPage = () => {
-  const navigate = useNavigate();
+  const { navigate } = useRouter();
 
   return (
     <div>
@@ -35,23 +35,26 @@ const CompanyDetails = () => (
   </div>
 );
 
-const LegalDetails = () => (
-  <div>
-    <h2>Legal Details</h2>
-    <p>Here are the legal details...</p>
-  </div>
-);
+const LegalDetails = () => {
+  const { params } = useRouter();
+  console.log(params);
+  return (
+    <div>
+      <h2>Legal Details</h2>
+      <p>Here are the legal details...</p>
+    </div>
+  );
+};
 
 function App() {
   return (
     <Router>
       <Route path="/" render={<HomePage />} />
       <Route path="/about" render={<AboutPage />}>
-        <Route path="/company" render={<CompanyDetails />}>
+        <Route path="/:company" render={<CompanyDetails />}>
           <Route path="/:name" render={<LegalDetails />} />
         </Route>
       </Route>
-      {/*<Route path="/about/legal" exact render={<LegalDetails />} />*/}
     </Router>
   );
 }

@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { RouterContext } from "./contexts";
 import { buildTree, findMatch } from "../lib/utils";
+import NotFound from "./not-found";
 
 export type RouteProps = {
   path: string;
@@ -31,8 +32,10 @@ export const Router = ({ children }: { children: ReactNode }) => {
   const element = findMatch(currentPath);
 
   return (
-    <RouterContext.Provider value={{ currentPath, navigate: handleRoute }}>
-      {element}
+    <RouterContext.Provider
+      value={{ currentPath, navigate: handleRoute, params: element.params }}
+    >
+      {element.element ?? <NotFound />}
     </RouterContext.Provider>
   );
 };
