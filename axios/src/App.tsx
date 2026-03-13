@@ -8,15 +8,24 @@ function App() {
       <button
         onClick={async () => {
           const axios = new AxiosInstance();
-          const data = await axios.GET(
-            "https://jsonplaceholder.typicode.com/photos",
-            {
-              onDownloadProgress: (e) => {
-                console.log(e);
+          try {
+            const data = await axios.POST(
+              "https://jsonplaceholder.typicode.com/photos",
+              {
+                body: JSON.stringify({
+                  title: "foo",
+                  body: "bar",
+                  userId: 1,
+                }),
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                },
               },
-            },
-          );
-          console.log(data);
+            );
+            console.log(data);
+          } catch (err) {
+            console.log(err);
+          }
         }}
       >
         click
